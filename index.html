@@ -162,11 +162,11 @@
     }
 
     function shareOnX() {
-      const text = `パンダさんパワー!!でスコア${score}を達成！\n#モーニング娘 #山﨑愛生 #パンダさんパワー #反射神経ゲーム\n\n▼ゲームはこちらから遊べるよ！
-      const url = encodeURIComponent("https://fuyutosan.github.io/pandasangame/"); // 公開URLに差し替えて！
-      const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`;
-      window.open(shareUrl, "_blank");
-    }
+  const text = `パンダさんパワー!!でスコア${score}を達成！\n#モーニング娘 #山﨑愛生 #パンダさんパワー #反射神経ゲーム\n\n▼ゲームはこちらから遊べるよ！\nhttps://fuyutosan.github.io/pandasangame/`;
+  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+  window.open(shareUrl, "_blank");
+}
+
 
     powerBtn.onclick = () => handleAnswer("パワー");
     sanBtn.onclick = () => handleAnswer("さん");
