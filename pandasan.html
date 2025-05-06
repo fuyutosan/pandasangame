@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>パンダさんパワー!!</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #b0f5b4;
+    }
+    h1 {
+      font-size: 2em;
+      margin-top: 30px;
+    }
+    #timer {
+      font-size: 1.5em;
+      margin-top: 10px;
+    }
+    #question {
+      font-size: 2.5em;
+      margin: 30px;
+    }
+    .btn {
+      font-size: 2em;
+      margin: 15px;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #powerBtn { background-color: #f28b82; }
+    #sanBtn { background-color: #a7c7e7; }
+    #score {
+      font-size: 1.5em;
+      margin-top: 10px;
+    }
+    #resultScreen {
+      display: none;
+      background-color: #ffffffdd;
+      padding: 40px;
+      border-radius: 20px;
+      margin: 30px auto;
+      width: 80%;
+      max-width: 400px;
+    }
+    #resultTitle {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    #rank {
+      font-size: 1.5em;
+      color: #333;
+    }
+    #shareBtn {
+      margin-top: 15px;
+      background-color: #1da1f2;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>パンダさんパワー!!</h1>
+  <div id="timer">残り: 60秒</div>
+  <div id="question">スタートを押してね！</div>
+  <button class="btn" id="powerBtn" disabled>パワー</button>
+  <button class="btn" id="sanBtn" disabled>さん</button>
+  <br>
+  <button onclick="startGame()">スタート</button>
+  <div id="score"></div>
+
+  <!-- リザルト画面 -->
+  <div id="resultScreen">
+    <div id="resultTitle">ゲーム終了！</div>
+    <div id="finalScore"></div>
+    <div id="rank"></div>
+    <br>
+    <button onclick="startGame()">もう一回！</button>
+    <br>
+    <button id="shareBtn" class="btn" onclick="shareOnX()">Xでシェア</button>
+  </div>
+
+  <script>
+    const words = ["パンダ", "パンダさん"];
+    let currentWord = "";
+    let score = 0;
+    let timeLeft = 60;
+    let timerInterval = null;
+    let gameActive = false;
+
+    const question = document.getElementById("question");
+    const scoreDisplay = document.getElementById("score");
+    const powerBtn = document.getElementById("powerBtn");
+    const sanBtn = document.getElementById("sanBtn");
+    const timerDisplay = document.getElementById("timer");
+    const resultScreen = document.getElementById("resultScreen");
+    const finalScore = document.getElementById("finalScore");
+    const rank = document.getElementById("rank");
+
+    function startGame() {
+      score = 0;
+      timeLeft = 60;
+      gameActive = true;
+      resultScreen.style.display = "none";
+      scoreDisplay.textContent = "";
+      timerDisplay.textContent = `残り: ${timeLeft}秒`;
+      powerBtn.disabled = false;
+      sanBtn.disabled = false;
+      startTimer();
+      nextWord();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `残り: ${timeLeft}秒`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function nextWord() {
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      question.textContent = currentWord;
+    }
+
+    function handleAnswer(answer) {
+      if (!gameActive) return;
+      const isCorrect =
+        (currentWord === "パンダ" && answer === "さん") ||
+        (currentWord === "パンダさん" && answer === "パワー");
+
+      if (isCorrect) {
+        score++;
+        scoreDisplay.textContent = `スコア: ${score}`;
+        nextWord();
+      } else {
+        endGame(true); // ミスしたので終了
+      }
+    }
+
+    function endGame(wasMistake = false) {
+      gameActive = false;
+      clearInterval(timerInterval);
+      powerBtn.disabled = true;
+      sanBtn.disabled = true;
+      question.textContent = wasMistake ? "ミス！" : "時間切れ！";
+      finalScore.textContent = `最終スコア: ${score}`;
+      rank.textContent = getRankMessage(score);
+      resultScreen.style.display = "block";
+    }
+
+    function getRankMessage(score) {
+      if (score >= 30) return "パンダさんマスター！尊敬します！";
+      if (score >= 20) return "すごい集中力！推しパワー全開！";
+      if (score >= 10) return "いい調子！あともう少し！";
+      return "まだまだこれから！パンダさんに癒されていこう！";
+    }
+
+    function shareOnX() {
+      const text = `パンダさんパワー!!でスコア${score}を達成！\n#パンダさんパワー #反射神経ゲーム`;
+      const url = encodeURIComponent("https://あなたのURL.com"); // 公開URLに差し替えて！
+      const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`;
+      window.open(shareUrl, "_blank");
+    }
+
+    powerBtn.onclick = () => handleAnswer("パワー");
+    sanBtn.onclick = () => handleAnswer("さん");
+  </script>
+
+</body>
+</html>
