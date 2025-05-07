@@ -87,7 +87,16 @@
     flex-wrap: wrap;
     margin: 20px 0;
   }
-   <button class="start-btn" onclick="startGame()">スタート</button>
+.start-btn {
+  font-size: 3em;
+  padding: 20px 60px;
+  margin-top: 30px;
+  background-color: #ffffffee;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
 </style>
 
 
@@ -102,7 +111,8 @@
   <button class="btn" id="sanBtn" disabled>さん</button>
 </div>
   <br>
-  <button onclick="startGame()">スタート</button>
+ <button class="start-btn" onclick="startGame()">スタート</button>
+
   <div id="score"></div>
 
   <!-- リザルト画面 -->
@@ -211,15 +221,7 @@
     sanBtn.onclick = () => handleAnswer("さん");
   </script>
 
-.start-btn {
-  font-size: 3em;
-  padding: 20px 50px;
-  margin-top: 20px;
-  border: none;
-  border-radius: 12px;
-  background-color: #ffffffcc;
-  cursor: pointer;
-}
+
 
 </body>
 </html>
