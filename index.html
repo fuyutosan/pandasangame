@@ -98,15 +98,25 @@
   display: inline-block;  /* ←追加ポイント！ */
 }
 #finalScore {
-  font-size: 2em;
+  font-size: 2.5em;
   margin-bottom: 10px;
 }
+
 
 #resultScreen button {
   font-size: 2em;
   padding: 15px 30px;
   border-radius: 10px;
   margin: 10px 0;
+}
+.retry-btn {
+  font-size: 2.4em;
+  padding: 20px 40px;
+  margin: 15px 0;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
 }
 
 </style>
@@ -133,7 +143,7 @@
     <div id="finalScore"></div>
     <div id="rank"></div>
     <br>
-    <button onclick="startGame()">もう一回！</button>
+    <button class="retry-btn" onclick="startGame()">もう一回！</button>
     <br>
     <button id="shareBtn" class="btn" onclick="shareOnX()">Xでシェア</button>
   </div>
