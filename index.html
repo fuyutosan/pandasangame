@@ -187,15 +187,16 @@
       finalScore.textContent = `最終スコア: ${score}`;
       rank.textContent = getRankMessage(score);
 
-      if (score >= 60) {
-        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_4.png";
-      } else if (score >= 40) {
-        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_3.png";
-      } else if (score >= 20) {
-        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_2.png";
-      } else {
-        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_1.png";
-      }
+    if (score >= 60) {
+  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_4.png";
+} else if (score >= 40) {
+  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_3.png";
+} else if (score >= 20) {
+  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_2.png";
+} else {
+  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_1.png";
+}
+
 
       rankImage.src = imageUrl;
       rankImage.style.display = "block";
