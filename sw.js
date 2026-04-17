@@ -1,4 +1,4 @@
-const CACHE = 'pandasangame-v1';
+const CACHE = 'pandasangame-v2';
 const ASSETS = [
   './',
   './index.html',
