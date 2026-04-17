@@ -2,10 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#b0f5b4">
+  <meta name="description" content="パンダさんパワー反射神経ゲーム">
+
+  <!-- PWA: ホーム画面追加対応 -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- iOS Safari 対応 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="パンダパワー">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+
   <title>パンダさんパワー!!</title>
   <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body {
       height: 100%;
+      height: 100dvh;
       margin: 0;
       background-color: #b0f5b4;
       font-family: sans-serif;
@@ -13,81 +28,90 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
+      touch-action: manipulation;
     }
-    h1 { font-size: 4em; margin: 20px 0; }
-    #timer { font-size: 2.5em; margin: 10px; }
-    #question { font-size: 3em; margin: 30px 0; }
+    h1 { font-size: clamp(2em, 8vw, 4em); margin: 10px 0; text-align: center; }
+    #timer { font-size: clamp(1.4em, 5vw, 2.5em); margin: 8px; }
+    #question { font-size: clamp(2em, 8vw, 3em); margin: 20px 0; }
     .btn {
-      font-size: 2.8em;
-      margin: 15px;
-      padding: 30px 50px;
+      font-size: clamp(1.8em, 7vw, 2.8em);
+      margin: 10px;
+      padding: clamp(20px, 4vw, 30px) clamp(30px, 8vw, 50px);
       border: none;
       border-radius: 16px;
       cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      active-opacity: 0.7;
     }
+    .btn:active { opacity: 0.75; transform: scale(0.96); }
     #powerBtn { background-color: #f28b82; }
     #sanBtn { background-color: #a7c7e7; }
-    #score { font-size: 2em; margin-top: 15px; }
+    #score { font-size: clamp(1.2em, 4vw, 2em); margin-top: 10px; }
     #resultScreen {
       display: none;
       background-color: #ffffffdd;
-      padding: 35px;
+      padding: 24px;
       border-radius: 20px;
-      margin: 20px auto;
-      width: 90%;
+      margin: 10px auto;
+      width: 92%;
       max-width: 450px;
       text-align: center;
     }
-    #resultTitle { font-size: 3em; margin-bottom: 15px; }
-    #rank { font-size: 2em; color: #333; }
+    #resultTitle { font-size: clamp(1.8em, 6vw, 3em); margin-bottom: 10px; }
+    #rank { font-size: clamp(1.2em, 4vw, 2em); color: #333; }
     #shareBtn {
-      margin-top: 20px;
-      font-size: 2em;
-      padding: 15px 30px;
+      margin-top: 16px;
+      font-size: clamp(1.2em, 4vw, 2em);
+      padding: 12px 24px;
       background-color: #1da1f2;
       color: white;
     }
     #buttonContainer {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: clamp(10px, 4vw, 30px);
       flex-wrap: wrap;
-      margin: 20px 0;
+      margin: 12px 0;
     }
     .start-btn {
-      font-size: 3em;
-      padding: 20px 60px;
-      margin-top: 30px;
+      font-size: clamp(2em, 7vw, 3em);
+      padding: 16px 48px;
+      margin-top: 20px;
       background-color: #ffffffee;
       border: none;
       border-radius: 12px;
       cursor: pointer;
       display: inline-block;
     }
-    #finalScore {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-    }
+    .start-btn:active { opacity: 0.75; transform: scale(0.97); }
+    #finalScore { font-size: clamp(1.5em, 5vw, 2.5em); margin-bottom: 8px; }
     #resultScreen button {
-      font-size: 2em;
-      padding: 15px 30px;
+      font-size: clamp(1.2em, 4vw, 2em);
+      padding: 12px 24px;
       border-radius: 10px;
-      margin: 10px 0;
+      margin: 8px 0;
     }
     .retry-btn {
-      font-size: 2.4em;
-      padding: 20px 40px;
-      margin: 15px 0;
+      font-size: clamp(1.4em, 5vw, 2.4em);
+      padding: 16px 32px;
+      margin: 10px 0;
       background-color: #ffffff;
       border: none;
       border-radius: 12px;
       cursor: pointer;
     }
+    .retry-btn:active { opacity: 0.75; transform: scale(0.97); }
     #rankImage {
-      max-width: 100%;
-      margin-top: 10px;
+      max-width: 60%;
+      max-height: 200px;
+      margin-top: 8px;
       display: none;
+      border-radius: 12px;
     }
+    #timer.danger { color: #e53935; }
+    #timer.warning { color: #f57c00; }
   </style>
 </head>
 <body>
@@ -114,6 +138,11 @@
   </div>
 
   <script>
+    // Service Worker 登録
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+
     const words = ["パンダ", "パンダさん"];
     let currentWord = "";
     let score = 0;
@@ -140,6 +169,7 @@
       rankImage.style.display = "none";
       scoreDisplay.textContent = "";
       timerDisplay.textContent = `残り: ${timeLeft}秒`;
+      timerDisplay.className = "";
       powerBtn.disabled = false;
       sanBtn.disabled = false;
       startTimer();
@@ -151,6 +181,7 @@
       timerInterval = setInterval(() => {
         timeLeft--;
         timerDisplay.textContent = `残り: ${timeLeft}秒`;
+        timerDisplay.className = timeLeft <= 10 ? "danger" : timeLeft <= 20 ? "warning" : "";
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
           endGame();
@@ -187,16 +218,15 @@
       finalScore.textContent = `最終スコア: ${score}`;
       rank.textContent = getRankMessage(score);
 
-    if (score >= 60) {
-  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_4.png";
-} else if (score >= 40) {
-  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_3.png";
-} else if (score >= 20) {
-  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_2.png";
-} else {
-  imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_1.png";
-}
-
+      if (score >= 60) {
+        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_4.png";
+      } else if (score >= 40) {
+        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_3.png";
+      } else if (score >= 20) {
+        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_2.png";
+      } else {
+        imageUrl = "https://fuyutosan.github.io/pandasangame/images/rank_1.png";
+      }
 
       rankImage.src = imageUrl;
       rankImage.style.display = "block";
